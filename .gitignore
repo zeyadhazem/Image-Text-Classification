@@ -1,0 +1,9 @@
+.idea/*
+
+.idea/vcs.xml
+
+*.ipynb
+
+data/*
+
+*.pyc
