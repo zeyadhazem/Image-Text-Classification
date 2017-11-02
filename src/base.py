@@ -15,12 +15,13 @@ print("> Transforming images into binary images")
 binaryImages = preprocessor.binarize(images)
 
 print("> Displaying binary images")
-for i in range(0, 10):
-    plt.imshow(np.uint8(binaryImages[i]), cmap='gray')
-    plt.show()
+# for i in range(0, 1):
+#     plt.imshow(np.uint8(binaryImages[i]), cmap='gray')
+#     plt.show()
 
 print("> Extracting the centers of symbols from images")
-symbolCenters = symbols.findCenter(binaryImages, 3)
+symbolCenters = symbols.findCenters(binaryImages, 3)
+print (symbolCenters)
 
 print("> Getting the images of the symbols")
 symbols.getSymbolImages(binaryImages, symbolCenters, 20, 20)
