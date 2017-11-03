@@ -10,10 +10,6 @@ def binarizeUsingThreshold(images, threshold):
         flt = images[i].copy()
         flt[flt < threshold] = 0
 
-        # Transforming into binary image
-        # flt[flt == 0] = False
-        # flt[flt > 0] = True
-
         processedImages.append(flt)
 
     return processedImages
@@ -28,10 +24,6 @@ def meanBinary(images):
         for j in range (0,3):
             mean = flt[flt.nonzero()].mean()
             flt[flt < mean] = 0
-
-        # Transforming into binary image
-        # flt[flt == 0] = False
-        # flt[flt > 0] = True
 
         processedImages.append(flt)
 
