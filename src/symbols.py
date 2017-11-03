@@ -86,11 +86,4 @@ def findSymbolsCenters(binaryImage, n_clusters):
 
         centers.append((cX, cY))
 
-        # draw the contour and center of the shape on the image
-        # cv2.circle(image, (cX, cY), 3, (255, 0, 0), -1)
-        # cv2.rectangle(image, (cX - 15, cY - 15), (cX + 15, cY + 15), (255,0,0), 1)
-
-    # cv2.imshow('gray_image',image)
-    # k = cv2.waitKey(0)
-
     return centers
