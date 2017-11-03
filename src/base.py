@@ -21,10 +21,9 @@ print("> Displaying binary images")
 
 print("> Extracting the centers of symbols from images")
 symbolCenters = symbols.findCenters(binaryImages, 3)
-print (symbolCenters)
 
 print("> Getting the images of the symbols")
-symbols.getSymbolImages(binaryImages, symbolCenters, 20, 20)
+symbols.getSymbolImages(binaryImages, symbolCenters, 30, 30)
 
 print("> Grouping symbols by similarity")
 groupingClassifier = kNN()
