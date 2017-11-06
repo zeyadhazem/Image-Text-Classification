@@ -2,8 +2,6 @@ from classifier import Classifier
 import math
 import numpy as np
 
-
-
 class NeuralNet (Classifier):
     """
     This class will use Neural nets to find the similar symbols from a list of symbols
@@ -12,7 +10,7 @@ class NeuralNet (Classifier):
         global net
         net = Network(topology)  # setup a network with the above topology
         Perceptron.learningRate = 0.09
-        Perceptron.momentum = 0.015
+        Perceptron.momentum = 0.01
 
     def fit(self, X, y):
         while True:
@@ -41,7 +39,7 @@ class NeuralNet (Classifier):
             b = input("type 2nd input :")
             net.setInput([a, b])
             net.feedForword()
-            print(net.getThResults())
+            print(net.getBinResults())
 
 class Connection: # simple class for defining connection between perceptrons 
     def __init__(self, connectedNeuron):
