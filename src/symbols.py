@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import imutils
+from sklearn.cluster import KMeans
 
 def findCenters (binaryImages, numSymbols):
     """
@@ -11,6 +12,8 @@ def findCenters (binaryImages, numSymbols):
     :return: A list of lists of centers of the symbols in each image
     """
     centers = []
+    # centers.append(findSymbolsCenters(binaryImages[0], numSymbols))
+
     for i in range (0, len(binaryImages)):
         centers.append(findSymbolsCenters(binaryImages[i], numSymbols))
 
@@ -42,7 +45,7 @@ def getSymbolImages (binary_images, centers, width, height):
             max_y = min(y + height/2, len(image) - 1)
 
             # truncate the symbol from the image
-            symbol = image[min_y:max_y, min_x:max_x].copy() # I don't really know why I have to inverse the indices, but it works!
+            symbol = image[min_x:max_x, min_y:max_y].copy()
 
             # Pad the remainin parts of the array to match width and height dimensions
             padding_x = width - (max_x - min_x)
@@ -58,7 +61,7 @@ def getSymbolImages (binary_images, centers, width, height):
 
     return all_symbol_images
 
-def findSymbolsCenters(binaryImage, n_clusters):
+def findSymbolsCenters2(binaryImage, n_clusters):
     """
     Transform image into 2 features X and Y and their
     :param binaryImage:
@@ -84,6 +87,30 @@ def findSymbolsCenters(binaryImage, n_clusters):
         cX = int(M["m10"] / M["m00"])
         cY = int(M["m01"] / M["m00"])
 
-        centers.append((cX, cY))
+        centers.append((cY, cX))
+
+    return centers
+
+def findSymbolsCenters(binaryImage, n_clusters):
+    """
+    Transform image into 2 features X and Y and their
+    :param binaryImage:
+    :param n_clusters:
+    :return:
+    """
+    centers = []
+    image = np.uint8(binaryImage)
+
+    blurred = cv2.GaussianBlur(image, (5, 5), 0)
+
+    zipped = zip(np.where(blurred > 0)[0], np.where(blurred > 0)[1])
+    brightPixelsCoords = []
+
+    for coords in zipped:
+        brightPixelsCoords.append(list(coords))
+
+    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(brightPixelsCoords)
+
+    centers = (kmeans.cluster_centers_).astype(int)
 
     return centers
