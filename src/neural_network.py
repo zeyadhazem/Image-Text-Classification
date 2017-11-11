@@ -156,13 +156,13 @@ class Network:
 def main():
     #loadCSV data and test
 
-    topology = [4096,4096,40]
-    x = np.loadtxt("../data/train_x.csv", delimiter=",")  # load from text
-    y = np.loadtxt("../data/train_y.csv", delimiter=",")
-    test = np.loadtxt("../data/test_x.csv", delimiter=",")
+    topology = [4096,40,40]
+    xData = np.loadtxt("../data/train_x.csv", delimiter=",")  # load from text
+    yData = np.loadtxt("../data/train_y.csv", delimiter=",")
+    testData = np.loadtxt("../data/test_x.csv", delimiter=",")
     run = NeuralNet(topology)
-    run.fit(x, y)
-    run.predict(test)
+    run.fit(xData, yData)
+    run.predict(testData)
 
 
 if __name__ == '__main__':
