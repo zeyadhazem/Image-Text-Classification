@@ -6,7 +6,7 @@ from kNN import kNN
 from neural_network import NeuralNet
 
 print("> Reading the text file")
-x = np.loadtxt("../data/temp.csv", delimiter=",") # load from text
+x = np.loadtxt("../data/train_x.csv", delimiter=",") # load from text
 
 print("> Shaping data into 64 * 64 pixel images")
 images = x.reshape(-1, 64, 64).astype(int) # reshape
@@ -26,7 +26,7 @@ print("> Getting the images of the symbols")
 symbols.getSymbolImages(binaryImages, symbolCenters, 30, 30)
 
 print("> Grouping symbols by similarity")
-groupingClassifier = kNN()
+#groupingClassifier = kNN()
 groupingClassifier2 = NeuralNet()
 
 print("> Create grouping logic now that symbols are separated and validate")

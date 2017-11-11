@@ -1,6 +1,8 @@
 from classifier import Classifier
 import math
 import numpy as np
+import preprocessor
+import symbols
 
 class NeuralNet (Classifier):
     """
@@ -26,14 +28,14 @@ class NeuralNet (Classifier):
             if err < 0.01:
                 break
 
-    def predict(self, test_set):
-        while True:
-            test = test_set
-
-            for i in range(len(test)):
-                net.setInput(test)
-                net.feedForword()
-                print(net.getResults())
+    def predict(self, test):
+        results = []
+        for i in range(len(test)):
+            net.setInput(test)
+            net.feedForword()
+            result = net.getResults()
+            print(net.getResults())
+            results.append(result)
 
 class Connection: # simple class for defining connection between perceptrons 
     def __init__(self, connectedNeuron):
@@ -152,18 +154,3 @@ class Network:
             output.append(o)
         output.pop()
         return output
-
-def main():
-    #loadCSV data and test
-
-    topology = [4096,40,40]
-    xData = np.loadtxt("../data/train_x.csv", delimiter=",")  # load from text
-    yData = np.loadtxt("../data/train_y.csv", delimiter=",")
-    testData = np.loadtxt("../data/test_x.csv", delimiter=",")
-    run = NeuralNet(topology)
-    run.fit(xData, yData)
-    run.predict(testData)
-
-
-if __name__ == '__main__':
-    main()

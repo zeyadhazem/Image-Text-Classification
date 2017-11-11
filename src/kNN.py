@@ -4,7 +4,7 @@ import copy
 import cv2
 import random
 import preprocessor
-from mnist import MNIST
+import mnist as MNIST
 
 class kNN (Classifier):
     """
@@ -87,7 +87,7 @@ class kNN (Classifier):
         for i in range(len(test_set)/3):
             # To know how far along we are
             if i % 1000 == 0:
-                print i
+                print(i)
             ret, result, neighbors, dist = self.knn.find_nearest(test_set[3*i:3*i+3], k = k)
             digits = []
             operators = []
@@ -124,7 +124,7 @@ class kNN (Classifier):
             else:
                 if operators[0][1] >= 0:
                     op = neighbors[index1][index2]
-                    print "Random op"
+                    print("Random op")
                 else:
                     op = result[index1]
             index1 = digits[0][0]
@@ -132,7 +132,7 @@ class kNN (Classifier):
             # Less than 2 numbers found, so choose a random number
             if index1 == None or index2 == None:
                 dig1 = random.choice([0,1,2,3,4,5,6,7,8,9])
-                print "Random num 1"
+                print("Random num 1")
             else:
                 # If the index > -1, then it's a neighbor
                 if index1 >= 0:
@@ -144,7 +144,7 @@ class kNN (Classifier):
             index2 = digits[1][1]
             if index1 == None or index2 == None:
                 dig2 = random.choice([0,1,2,3,4,5,6,7,8,9])
-                print "Random num 2"
+                print("Random num 2")
             else:
                 if index1 >= 0:
                     dig2 = int(neighbors[index1][index2])

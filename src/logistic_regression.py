@@ -67,7 +67,7 @@ def apply_operations(data):
     results = []
     for i in range(len(data)/3):
         if i % 1000 == 0:
-            print i
+            print(i)
         els = data[i:i+3]
         digits = []
         ops = []
