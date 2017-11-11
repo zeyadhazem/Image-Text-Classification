@@ -29,17 +29,11 @@ class NeuralNet (Classifier):
     def predict(self, test_set):
         while True:
             test = test_set
-            '''
+
             for i in range(len(test)):
                 net.setInput(test)
                 net.feedForword()
                 print(net.getResults())
-            '''
-            a = input("type 1st input :")
-            b = input("type 2nd input :")
-            net.setInput([a, b])
-            net.feedForword()
-            print(net.getBinResults())
 
 class Connection: # simple class for defining connection between perceptrons 
     def __init__(self, connectedNeuron):
@@ -160,15 +154,15 @@ class Network:
         return output
 
 def main():
-    sampleInputs = [[0, 1], [0, 1], [1, 0], [1, 1]]
-    sampleOutputs = [[0, 0], [1, 0], [1, 0], [0, 1]]
-    sampleTests = [[0, 1]]
+    #loadCSV data and test
 
-    topology = [2,3,2]
-
+    topology = [4096,4096,40]
+    x = np.loadtxt("../data/train_x.csv", delimiter=",")  # load from text
+    y = np.loadtxt("../data/train_y.csv", delimiter=",")
+    test = np.loadtxt("../data/test_x.csv", delimiter=",")
     run = NeuralNet(topology)
-    run.fit(sampleInputs, sampleOutputs)
-    run.predict(sampleTests)
+    run.fit(x, y)
+    run.predict(test)
 
 
 if __name__ == '__main__':
