@@ -10,12 +10,18 @@ class NeuralNet (Classifier):
     """
     def __init__(self, topology):
         global net
+        self.a = 10.0  # can't train on letters so a = 10 and m = 11
+        self.m = 11.0
         net = Network(topology)  # setup a network with the above topology
-        Perceptron.learningRate = 0.09
+        Perceptron.learningRate = 0.001
         Perceptron.momentum = 0.01
 
     def fit(self, X, y):
+        firstRun = True
         while True:
+            if (firstRun):
+                firstRun = False
+                olderror = 10
             err = 0
             inputs = X
             outputs = y
@@ -25,8 +31,10 @@ class NeuralNet (Classifier):
                 net.backPropagate(outputs[i])
                 err = err + net.getError(outputs[i])
             print("error: ", err)
-            if err < 0.01:
+            if abs(err-olderror) < 0.1:
+                print("Trained: ", abs(err-olderror))
                 break
+            olderror = err
 
     def predict(self, test):
         for i in range(len(test)):
@@ -63,8 +71,8 @@ class Perceptron:
 
     def sigmoid(self, x): #activation function
         try:
-            ans = math.exp(-x * 1.0)
-        except OverflowError:
+            ans = np.exp(-x * 1.0)
+        except:
             ans = float('inf')
         return 1 / (1 + ans)
 
@@ -79,7 +87,7 @@ class Perceptron:
             sumOutput = sumOutput + aX.connectedNeuron.getOutput() * aX.weight
         self.output = self.sigmoid(sumOutput)
 
-    def backPropagate(self): # backpropogation algorithm found at https://thecodacus.com/, wikipedia backpropagate
+    def backPropagate(self): # backpropogation algorithm found at wikipedia backpropagate
         self.gradient = self.error * self.dSigmoid(self.output);
         for aX in self.connects:
             aX.dWeight = Perceptron.learningRate * (
@@ -123,10 +131,23 @@ class Network:
                 perceptron.feedForword();
 
     def backPropagate(self, target):
-        self.layers[-1][0].setError(target - self.layers[-1][0].getOutput())
+        err = 0
+        if (target == self.layers[-1][0].getOutput()):
+            err += 0
+        else:
+            err += 1
+        self.layers[-1][0].setError(err)
         for layer in self.layers[::-1]:
             for perceptron in layer:
                 perceptron.backPropagate()
+
+    # def getError(self, target):
+    #     err = 0
+    #     if (target == self.layers[-1][0].getOutput()):
+    #         err += 0
+    #     else:
+    #         err += 1
+    #     return err
 
     def getError(self, target):
         err = 0
