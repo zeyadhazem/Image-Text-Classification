@@ -29,13 +29,11 @@ class NeuralNet (Classifier):
                 break
 
     def predict(self, test):
-        results = []
         for i in range(len(test)):
             net.setInput(test)
             net.feedForword()
             result = net.getResults()
-            print(net.getResults())
-            results.append(result)
+            return result
 
 class Connection: # simple class for defining connection between perceptrons 
     def __init__(self, connectedNeuron):
@@ -64,7 +62,11 @@ class Perceptron:
         self.error = self.error + err
 
     def sigmoid(self, x): #activation function
-        return 1 / (1 + math.exp(-x * 1.0))
+        try:
+            ans = math.exp(-x * 1.0)
+        except OverflowError:
+            ans = float('inf')
+        return 1 / (1 + ans)
 
     def dSigmoid(self, x): #derivative of sigmoid
         return x * (1.0 - x)
@@ -121,18 +123,15 @@ class Network:
                 perceptron.feedForword();
 
     def backPropagate(self, target):
-        for i in range(len(target)):
-            self.layers[-1][i].setError(target[i] - self.layers[-1][i].getOutput())
+        self.layers[-1][0].setError(target - self.layers[-1][0].getOutput())
         for layer in self.layers[::-1]:
             for perceptron in layer:
                 perceptron.backPropagate()
 
     def getError(self, target):
         err = 0
-        for i in range(len(target)):
-            e = (target[i] - self.layers[-1][i].getOutput())
-            err = err + e ** 2
-        err = err / len(target)
+        e = (target - self.layers[-1][0].getOutput())
+        err = err + e ** 2
         err = math.sqrt(err)
         return err
 
