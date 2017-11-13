@@ -54,7 +54,7 @@ def predict():
     results = []
     for i in range(1,len(fb_symbs) + 1):
         if i % 1000 == 0:
-            print i
+            print(i)
         results.append(inst.predict(fb_symbs[i-1:i]))
     return results
 
@@ -65,7 +65,7 @@ def predict():
 # Try reversing order of m and a to prioritize a more
 def apply_operations(data):
     results = []
-    for i in range(len(data)/3):
+    for i in range(len(data)//3):
         if i % 1000 == 0:
             print(i)
         els = data[i:i+3]

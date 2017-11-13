@@ -4,14 +4,14 @@ import copy
 import cv2
 import random
 import preprocessor
-import mnist as MNIST
+from mnist import MNIST
 
 class kNN (Classifier):
     """
     This class will use k nearest neighbours to find the similar symbols from a list of symbols
     """
     def __init__(self):
-        self.knn = cv2.KNearest()
+        self.knn = cv2.ml.KNearest_create()
         self.results = []
         self.a = 10.0 #KNN can't train on letters so a = 10 and m = 11
         self.m = 11.0
@@ -22,19 +22,20 @@ class kNN (Classifier):
     # The mnist data has to be loaded from the files with the right name
     # We have two files to load so we need two directories
     def load_MNIST(self):
+        mdata = MNIST(path="../data/digit_MNIST")
+        m_data, m_labels = mdata.load_training()
+        m_data = np.array(m_data).reshape(-1,28,28).astype(float)
+        m_data = preprocessor.binarize(m_data)
+        self.mnist_labels += m_labels[:8000]
+        self.mnist_data += m_data[:8000]
+
         mdata = MNIST(path="../data/letter_MNIST")
         m_data, m_labels = mdata.load_training()
         m_data, m_labels = self.filter_operators(m_data, m_labels)
         m_data = np.array(m_data).reshape(-1,28,28).astype(float)
         m_data = preprocessor.binarize(m_data)
-        self.mnist_labels += m_labels
-        self.mnist_data += m_data
-        mdata = MNIST(path="../data/digit_MNIST")
-        m_data, m_labels = mdata.load_training()
-        m_data = np.array(m_data).reshape(-1,28,28).astype(float)
-        m_data = preprocessor.binarize(m_data)
-        self.mnist_labels += m_labels
-        self.mnist_data += m_data        
+        self.mnist_labels += m_labels[:2000]
+        self.mnist_data += m_data[:2000]
 
     def train_with_MNIST(self):
         self.fit(np.array(self.mnist_data), np.array(self.mnist_labels), r=28, c=28)

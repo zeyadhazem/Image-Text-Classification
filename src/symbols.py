@@ -39,10 +39,10 @@ def getSymbolImages (binary_images, centers, width, height):
         index = 0
 
         for (x,y) in centers[i]:
-            min_x = max(x - width/2, 0)
-            max_x = min(x + width/2, len(image) - 1)
-            min_y = max(y - height/2, 0)
-            max_y = min(y + height/2, len(image) - 1)
+            min_x = max(int(x - width/2), 0)
+            max_x = min(int(x + width/2), int(len(image)) - 1)
+            min_y = max(int(y - height/2), 0)
+            max_y = min(int(y + height/2), int(len(image)) - 1)
 
             # truncate the symbol from the image
             symbol = image[min_x:max_x, min_y:max_y].copy()
