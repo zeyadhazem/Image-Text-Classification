@@ -11,7 +11,7 @@ class kNN (Classifier):
     This class will use k nearest neighbours to find the similar symbols from a list of symbols
     """
     def __init__(self):
-        self.knn = cv2.ml.KNearest_create()
+        self.knn = cv2.KNearest()
         self.results = []
         self.a = 10.0 #KNN can't train on letters so a = 10 and m = 11
         self.m = 11.0
@@ -22,20 +22,28 @@ class kNN (Classifier):
     # The mnist data has to be loaded from the files with the right name
     # We have two files to load so we need two directories
     def load_MNIST(self):
-        mdata = MNIST(path="../data/digit_MNIST")
-        m_data, m_labels = mdata.load_training()
-        m_data = np.array(m_data).reshape(-1,28,28).astype(float)
-        m_data = preprocessor.binarize(m_data)
-        self.mnist_labels += m_labels[:8000]
-        self.mnist_data += m_data[:8000]
-
         mdata = MNIST(path="../data/letter_MNIST")
         m_data, m_labels = mdata.load_training()
         m_data, m_labels = self.filter_operators(m_data, m_labels)
         m_data = np.array(m_data).reshape(-1,28,28).astype(float)
+        for i in range(len(m_data)):
+            m_data[i] = np.transpose(m_data[i])
+            m_data[i]
         m_data = preprocessor.binarize(m_data)
-        self.mnist_labels += m_labels[:2000]
-        self.mnist_data += m_data[:2000]
+        self.mnist_labels = m_labels
+        self.mnist_data = m_data
+        mdata = MNIST(path="../data/digit_MNIST")
+        m_data, m_labels = mdata.load_training()
+        m_data = np.array(m_data).reshape(-1,28,28).astype(float)
+        m_data = preprocessor.binarize(m_data)
+        self.mnist_labels += m_labels
+        self.mnist_data += m_data
+        #self.mnist_data = self.normalize(self.mnist_data)
+
+    def normalize (self, image):
+        image = (image - np.min(np.abs(image))).astype(float)
+        image = image/np.max(np.abs(image))
+        return image
 
     def train_with_MNIST(self):
         self.fit(np.array(self.mnist_data), np.array(self.mnist_labels), r=28, c=28)
@@ -70,17 +78,18 @@ class kNN (Classifier):
     # Predicts the most probable symbols, every 3 symbols
     # Sees if it's possible to do an operation, if it is, do the operation
     # Otherwise, look through the neighbors until the most probable one is found
-    def predict_digits(self, test_set, r = 28, c = 28, k = 5):
+    def predict_digits(self, test_set, r = 28, c = 28, k = 5, skip = False):
         
         # If the test_set is not an np array, convert to np array
         #if not type(test_set).__module__ == np.__name__:
         #    test_set = np.array(test_set)      
-        try:
-            test_set = self.convert(test_set, r, c)
-        except:       
-            for i in range(len(test_set)):
-                el = test_set[i]
-                test_set[i] = self.convert(test_set[i],len(el),len(el[0]))
+        if not skip:
+            try:
+                test_set = self.convert(test_set, r, c)
+            except:       
+                for i in range(len(test_set)):
+                    el = test_set[i]
+                    test_set[i] = self.convert(test_set[i],len(el),len(el[0]))
         results = []
         # we classify every 3 examples
         # then use these symbols to do an operation
@@ -88,7 +97,7 @@ class kNN (Classifier):
         for i in range(len(test_set)/3):
             # To know how far along we are
             if i % 1000 == 0:
-                print(i)
+                print i
             ret, result, neighbors, dist = self.knn.find_nearest(test_set[3*i:3*i+3], k = k)
             digits = []
             operators = []
@@ -122,10 +131,10 @@ class kNN (Classifier):
             # This is the case that no operators were found
             if index1 == None or index2 == None:
                 op = random.choice([self.a,self.m])
+                print "Random op"                
             else:
                 if operators[0][1] >= 0:
                     op = neighbors[index1][index2]
-                    print("Random op")
                 else:
                     op = result[index1]
             index1 = digits[0][0]
@@ -133,7 +142,7 @@ class kNN (Classifier):
             # Less than 2 numbers found, so choose a random number
             if index1 == None or index2 == None:
                 dig1 = random.choice([0,1,2,3,4,5,6,7,8,9])
-                print("Random num 1")
+                print "Random num 1"
             else:
                 # If the index > -1, then it's a neighbor
                 if index1 >= 0:
@@ -145,7 +154,7 @@ class kNN (Classifier):
             index2 = digits[1][1]
             if index1 == None or index2 == None:
                 dig2 = random.choice([0,1,2,3,4,5,6,7,8,9])
-                print("Random num 2")
+                print "Random num 2"
             else:
                 if index1 >= 0:
                     dig2 = int(neighbors[index1][index2])
@@ -215,6 +224,14 @@ class kNN (Classifier):
                 
         return op_data, op_labels
 
+
+    # Turn the flat symbols into a format that fits in the kNN
+    def npify(self, data):
+        r_dat = np.array([[None]*len(data[0])]*len(data)).astype(np.float32)
+        for i in range(len(data)):
+            e = np.array(data[i]).astype(np.float32)
+            r_dat[i] = e
+        return r_dat
     
     # Turns an np array of 64x64 matrices into one 4096 array of type float
     # r and c are the rows and columns
