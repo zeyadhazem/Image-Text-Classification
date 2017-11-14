@@ -4,7 +4,6 @@ import copy
 import cv2
 import random
 import preprocessor
-from mnist import MNIST
 
 class kNN (Classifier):
     """

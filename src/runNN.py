@@ -5,7 +5,6 @@ import symbols
 import kNN
 import neural_network
 import logistic_regression
-from mnist import MNIST
 
 def predict(symbImgs, topology):
     # Flatten using knn first
