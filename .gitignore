@@ -9,3 +9,7 @@ data/*
 *.pyc
 
 *.jpg
+
+*.csv
+
+*.gz

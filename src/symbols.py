@@ -48,9 +48,11 @@ def getSymbolImages (binary_images, centers, width, height):
             symbol = image[min_x:max_x, min_y:max_y].copy()
 
             # Pad the remainin parts of the array to match width and height dimensions
-            padding_x = width - (max_x - min_x)
-            padding_y = height - (max_y - min_y)
-            symbol = np.lib.pad(symbol, ((0, padding_y), (0, padding_x)), 'constant', constant_values=0)
+            (img_width, img_height) = symbol.shape
+            padding_x = width - img_width
+            padding_y = height - img_height
+
+            symbol = np.lib.pad(symbol, ((0, padding_x), (0, padding_y)), 'constant', constant_values=0)
 
             # Save
             single_image_symbols.append(symbol)
